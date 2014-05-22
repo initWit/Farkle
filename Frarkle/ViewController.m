@@ -30,6 +30,7 @@
 @property NSNumber * potentialScoreNumber;
 @property (strong, nonatomic) IBOutlet UILabel *potentialScoreLabel;
 @property (strong, nonatomic) NSMutableArray *rolledDiceArray;
+@property (strong, nonatomic) IBOutlet UIButton *rollButton;
 
 @end
 
@@ -73,23 +74,23 @@
     self.rolledDiceArray = [[NSMutableArray alloc]init];
 }
 
-- (IBAction)onRollButtonPressed:(id)sender
+- (IBAction)onRollButtonPressed:(UIButton*) sender
 {
 
     if (self.cashOutButton.enabled == NO) {
         [self.cashOutButton setEnabled:YES];
     }
 
-    if (self.selectedDieArrayAfterRoll.count == 6) {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Turn Over"
-                                                       message:@"Switch Player"
-                                                      delegate:nil
-                                             cancelButtonTitle:@"OK"
-                                             otherButtonTitles: nil];
-        [alert show];
-        [self whichPlayersTurn];
-        [self resetBoard];
-    }
+//    if (self.selectedDieArrayAfterRoll.count == 6) {
+//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Turn Over"
+//                                                       message:@"Switch Player"
+//                                                      delegate:nil
+//                                             cancelButtonTitle:@"OK"
+//                                             otherButtonTitles: nil];
+//        [alert show];
+//        [self whichPlayersTurn];
+//        [self resetBoard];
+//    }
 
     for (DieLabel *eachDieLabel in self.labelArray) {
 
@@ -108,6 +109,16 @@
 
     NSLog(@"rolledDiceArray is %i",self.rolledDiceArray.count);
 
+    if ([self didFarkle:self.rolledDiceArray]) {
+        self.whichPlayerLabel.text = @"OOPS! YOU JUST FARKLED!";
+        self.whichPlayerLabel.backgroundColor = [UIColor redColor];
+
+        self.potentialScoreNumber = [NSNumber numberWithInt:0];
+        self.potentialScoreLabel.text = @"0";
+        [sender setEnabled:NO];
+    }
+
+    [self.rolledDiceArray removeAllObjects];
 
 }
 
@@ -118,6 +129,12 @@
     NSNumber *score = [self returnScore:self.selectedDieArrayAfterRoll exisitingScore:self.playerOneScore];
     self.potentialScoreNumber = score;
     self.potentialScoreLabel.text = [NSString stringWithFormat:@"Potential Score: %i",[self.potentialScoreNumber intValue]];
+
+    if ([self didCompleteBoard:self.labelArray]) {
+        self.whichPlayerLabel.text = @"NICE MOVES!";
+        self.whichPlayerLabel.backgroundColor = [UIColor greenColor];
+        [self.rollButton setEnabled:NO];
+    }
 }
 
 - (void)whichPlayersTurn
@@ -126,16 +143,18 @@
 
     if (!self.editing) {
         [self.selectedDieArrayAfterRoll removeAllObjects];
-        self.whichPlayerLabel.text = @"Player 1";
+        self.whichPlayerLabel.text = @"Player 1's Turn";
 
     } else {
         [self.selectedDieArrayAfterRoll removeAllObjects];
-        self.whichPlayerLabel.text = @"Player 2";
+        self.whichPlayerLabel.text = @"Player 2's Turn";
     }
 }
 
 - (IBAction)onCashOutButton:(id)sender
 {
+    [self.rollButton setEnabled:YES];
+    self.whichPlayerLabel.backgroundColor = [UIColor whiteColor];
 
     if (!self.editing) {
 
@@ -152,6 +171,18 @@
         [self whichPlayersTurn];
         [self resetBoard];
     }
+
+//    if (self.playerOneScore.intValue > 1000) {
+//        self.whichPlayerLabel.text = @"PLAYER 1 WINS!";
+//        self.whichPlayerLabel.backgroundColor = [UIColor blueColor];
+//    }
+//
+//    if (self.playerTwoScore.intValue > 1000) {
+//        self.whichPlayerLabel.text = @"PLAYER 2 WINS!";
+//        self.whichPlayerLabel.backgroundColor = [UIColor blueColor];
+//    }
+
+
 }
 
 #pragma mark - Helper Methods
@@ -215,6 +246,48 @@
         return newScore;
     }
     return nil;
+}
+
+- (BOOL) didFarkle:(NSMutableArray *) rolledDiceArray {
+
+    NSLog(@"rolledDiceArray count is %i",rolledDiceArray.count);
+
+    for (int i = 0;  i < 7; i++) {
+
+        NSString *predicateCondition = [NSString stringWithFormat:@"value = %i", i];
+
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateCondition];
+        NSArray *diceWithCurrentNumber = [rolledDiceArray filteredArrayUsingPredicate:predicate];
+
+        NSLog(@"diceWithCurrentNumber count is %i",diceWithCurrentNumber.count);
+
+        if (i == 1 && diceWithCurrentNumber.count > 0) {
+            return NO;
+        }else if (i == 5 && diceWithCurrentNumber.count > 0){
+            return NO;
+        }
+        else if (diceWithCurrentNumber.count > 2) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (BOOL) didCompleteBoard:(NSArray *) allDiceArray{
+
+    NSMutableArray* arrayOfSelectedDice = [[NSMutableArray alloc]init];
+
+    for (DieLabel *eachDieLabel in allDiceArray) {
+        if (eachDieLabel.isSelected) {
+            [arrayOfSelectedDice addObject:eachDieLabel];
+        }
+    }
+
+    if (arrayOfSelectedDice.count == 6) {
+        return YES;
+    }
+
+    return NO;
 }
 
 @end

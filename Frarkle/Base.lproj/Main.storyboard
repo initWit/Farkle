@@ -123,7 +123,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Player 1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="92g-9C-suZ">
-                                <rect key="frame" x="115" y="396" width="79" height="21"/>
+                                <rect key="frame" x="31" y="396" width="258" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
@@ -159,6 +159,7 @@
                         <outlet property="playerOneScoreLabel" destination="Kjz-65-j7Z" id="UNY-wP-mpo"/>
                         <outlet property="playerTwoScoreLabel" destination="Pxc-nm-D9F" id="vIJ-5F-zX9"/>
                         <outlet property="potentialScoreLabel" destination="FnT-jQ-Yl9" id="Hd1-cc-ELG"/>
+                        <outlet property="rollButton" destination="pq0-gs-Ydg" id="cNQ-64-pxT"/>
                         <outlet property="userScore" destination="pyx-LM-YB1" id="8Ob-bE-ID4"/>
                         <outlet property="whichPlayerLabel" destination="92g-9C-suZ" id="Mb1-vl-9Pd"/>
                     </connections>
